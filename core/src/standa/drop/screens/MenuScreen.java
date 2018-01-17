@@ -62,7 +62,6 @@ public class MenuScreen implements Screen {
                 .button(noButton)
                 .text("Do you really want to reset your highscore?");
 
-
         listener = new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

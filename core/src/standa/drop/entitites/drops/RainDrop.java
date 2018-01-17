@@ -1,9 +1,10 @@
-package standa.drop.entitites;
+package standa.drop.entitites.drops;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import standa.drop.BackgroundRainManager;
 import standa.drop.Utils;
+import standa.drop.entitites.Entity;
 
 public class RainDrop extends Entity {
 

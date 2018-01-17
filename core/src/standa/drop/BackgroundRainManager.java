@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
-import standa.drop.entitites.RainDrop;
+import standa.drop.entitites.drops.RainDrop;
 
 import java.util.Iterator;
 

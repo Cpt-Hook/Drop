@@ -10,7 +10,7 @@ import standa.drop.screens.gamescreen.GameScreen;
 public abstract class GameEntity extends Entity{
 
     protected GameScreen game;
-    protected Rectangle hitBox;
+    public Rectangle hitBox;
     public boolean debug;
 
     protected GameEntity(int x, int y, int width, int height, Texture texture, GameScreen game) {

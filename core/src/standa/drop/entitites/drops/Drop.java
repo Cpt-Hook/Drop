@@ -1,7 +1,8 @@
-package standa.drop.entitites;
+package standa.drop.entitites.drops;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import standa.drop.entitites.GameEntity;
 import standa.drop.screens.gamescreen.GameScreen;
 
 public class Drop extends GameEntity {
