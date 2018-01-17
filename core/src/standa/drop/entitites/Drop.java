@@ -20,16 +20,17 @@ public class Drop extends GameEntity {
     @Override
     public void tick() {
         rect.y-=speed;
-        if(rect.y<-rect.height){
+        if(hitBox.y<-rect.height){
             toDie = true;
             gameOverSound.play();
             game.removeHealth();
         }
-        else if(game.bucket.collisionRect.overlaps(rect)){
+        else if(game.bucket.hitBox.overlaps(rect)){
             toDie = true;
             dropSound.play();
             game.addScore();
         }
+        super.tick();
     }
 
     @Override

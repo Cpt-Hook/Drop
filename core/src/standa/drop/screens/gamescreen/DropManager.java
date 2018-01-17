@@ -3,10 +3,10 @@ package standa.drop.screens.gamescreen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import standa.drop.entitites.Drop;
-import standa.drop.screens.gamescreen.GameScreen;
 
 import java.util.Iterator;
 
@@ -40,9 +40,9 @@ public class DropManager {
         }
     }
 
-    public void draw(final SpriteBatch batch){
+    public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer){
         for (Drop drop : drops) {
-            drop.draw(batch);
+            drop.draw(batch, shapeRenderer);
         }
     }
 

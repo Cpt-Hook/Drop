@@ -2,6 +2,7 @@ package standa.drop.entitites;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -20,7 +21,7 @@ public abstract class Entity implements Disposable {
 
     public abstract void tick();
 
-    public void draw(SpriteBatch batch){
+    public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer){
         batch.draw(texture, rect.x, rect.y, rect.width, rect.height);
     }
 

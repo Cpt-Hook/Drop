@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
 import standa.drop.DropGame;
 
@@ -32,7 +33,7 @@ public class InfoPrinter {
 
 
 
-    public void draw(SpriteBatch batch){
+    public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer){
         font.draw(batch, layout, offset, game.height - offset);
     }
 }

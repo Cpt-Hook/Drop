@@ -2,6 +2,7 @@ package standa.drop;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import standa.drop.entitites.RainDrop;
 
@@ -29,9 +30,9 @@ public class BackgroundRainManager {
         return game.height;
     }
 
-    public void draw(SpriteBatch batch){
+    public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer){
         for(RainDrop drop:raindrops){
-            drop.draw(batch);
+            drop.draw(batch, shapeRenderer);
         }
     }
 

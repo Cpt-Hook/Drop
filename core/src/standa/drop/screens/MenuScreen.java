@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -20,7 +21,8 @@ public class MenuScreen implements Screen {
     private Skin skin;
     private Stage stage;
     private SpriteBatch batch;
-    private DropGame game;
+    private ShapeRenderer shapeRenderer;
+    private DropGame drop;
     private BackgroundRainManager rain;
     private ChangeListener listener;
 
@@ -31,16 +33,16 @@ public class MenuScreen implements Screen {
     private Texture dropTexture;
     private Sound clickSound;
 
-    public MenuScreen(DropGame game){
-        this.game=game;
-        this.batch=game.batch;
-        padding = game.width/75;
-        buttonWidth = game.width/10;
+    public MenuScreen(DropGame drop){
+        this.drop=drop;
+        this.batch=drop.batch;
+        padding = drop.width/75;
+        buttonWidth = drop.width/10;
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click.wav"));
-        rain = new BackgroundRainManager(new Texture(Gdx.files.internal("sprites/raindrop.png")), game);
+        rain = new BackgroundRainManager(new Texture(Gdx.files.internal("sprites/raindrop.png")), drop);
 
-        stage = new Stage(new StretchViewport(game.width, game.height), batch);
+        stage = new Stage(new StretchViewport(drop.width, drop.height), batch);
         Gdx.input.setInputProcessor(stage);
 
 
@@ -53,41 +55,63 @@ public class MenuScreen implements Screen {
         TextButton resetButton = new TextButton("RESET HIGHSCORE", skin);
         TextButton exitButton = new TextButton("EXIT", skin);
 
+        CheckBox debugCheckBox = new CheckBox("Debug", skin);
+
+
+        Dialog dialog = new Dialog("Warning", skin);
+        TextButton yesButton = new TextButton("Yes", skin);
+        TextButton noButton = new TextButton("No", skin);
+        dialog.button(yesButton)
+                .button(noButton)
+                .text("Do you really want to reset your highscore?");
+
+
         listener = new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if(actor == playButton){
-                    game.setScreen(new GameScreen(game));
+                    drop.setScreen(new GameScreen(drop));
                 }else if(actor == resetButton){
-                    game.pref.putInteger("highScore", 0);
+                    dialog.show(stage);
                 }else if(actor == exitButton){
                     Gdx.app.exit();
+                }else if(actor == debugCheckBox){
+                    drop.debug = debugCheckBox.isChecked();
+                }else if(actor == yesButton){
+                    drop.pref.putInteger("highScore", 0);
+                    drop.pref.flush();
                 }
                 clickSound.play();
             }
         };
+
         exitButton.addListener(listener);
         resetButton.addListener(listener);
         playButton.addListener(listener);
+        yesButton.addListener(listener);
+        noButton.addListener(listener);
+        debugCheckBox.addListener(listener);
 
         Table table = new Table();
-        table.setDebug(false);
-        table.add(menuLabel).pad(padding);
+        table.defaults().pad(padding);
+        table.setDebug(true);
+        table.add(menuLabel);
         table.row();
-        table.add(dropImage).pad(padding);
+        table.add(dropImage);
         table.row();
-        table.add(playButton).minWidth(buttonWidth).pad(padding);
+        table.add(playButton).minWidth(buttonWidth);
         table.row();
-        table.add(resetButton).minWidth(buttonWidth).pad(padding);
+        table.add(resetButton).minWidth(buttonWidth);
         table.row();
-        table.add(exitButton).minWidth(game.width/10).pad(padding);
+        table.add(exitButton).minWidth(drop.width/10);
+        table.row();
+        table.add(debugCheckBox);
         table.setFillParent(true);
         stage.addActor(table);
     }
 
     @Override
     public void show() {
-
     }
 
     @Override
@@ -96,7 +120,7 @@ public class MenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         rain.tick();
         batch.begin();
-        rain.draw(batch);
+        rain.draw(batch, shapeRenderer);
         batch.end();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
