@@ -17,11 +17,11 @@ public class DropGame extends Game {
     public BitmapFont font;
     public Preferences pref;
 
-    private Music rainMusic;
+    private Music backgroundMusic;
     private MenuScreen menu;
 
     public int width=900, height=450;
-    public boolean debug = false;
+    public boolean debug = false, playMusic;
 
     @Override
     public void create() {
@@ -29,10 +29,13 @@ public class DropGame extends Game {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
-        rainMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/raining.mp3"));
-        rainMusic.setLooping(true);
-        rainMusic.setVolume(0.25f);
-        rainMusic.play();
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/raining.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.25f);
+
+        if(!pref.contains("backgroundMusic")) playMusic = true;
+        playMusic = pref.getBoolean("backgroundMusic");
+        if(playMusic) backgroundMusic.play();
         menu = new MenuScreen(this);
         changeScreenToMenu();
     }
@@ -44,13 +47,23 @@ public class DropGame extends Game {
     @Override
     public void pause() {
         super.pause();
-        rainMusic.stop();
+        backgroundMusic.stop();
     }
 
     @Override
     public void resume() {
         super.resume();
-        rainMusic.play();
+        if(playMusic) backgroundMusic.play();
+    }
+
+    public void stopMusic(){
+        backgroundMusic.stop();
+        playMusic = false;
+    }
+
+    public void playMusic(){
+        backgroundMusic.play();
+        playMusic = true;
     }
 
     @Override
@@ -59,6 +72,6 @@ public class DropGame extends Game {
         font.dispose();
         batch.dispose();
         pref.flush();
-        rainMusic.dispose();
+        backgroundMusic.dispose();
     }
 }

@@ -6,11 +6,13 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import standa.drop.BackgroundRainManager;
 import standa.drop.DropGame;
@@ -20,6 +22,9 @@ public class MenuScreen implements Screen {
 
     private Skin skin;
     private Stage stage;
+    private Table table;
+    private Dialog dialog;
+
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private DropGame drop;
@@ -27,7 +32,7 @@ public class MenuScreen implements Screen {
     private ChangeListener listener;
 
 
-    private Texture dropTexture;
+    private Texture dropTexture, onSoundTexture, offSoundTexture;
     private Sound clickSound;
 
     public MenuScreen(DropGame drop){
@@ -54,13 +59,21 @@ public class MenuScreen implements Screen {
 
         CheckBox debugCheckBox = new CheckBox("Debug", skin);
 
-
-        Dialog dialog = new Dialog("Warning", skin);
+        dialog = new Dialog("Warning", skin);
         TextButton yesButton = new TextButton("Yes", skin);
         TextButton noButton = new TextButton("No", skin);
         dialog.button(yesButton)
                 .button(noButton)
                 .text("Do you really want to reset your highscore?");
+
+        onSoundTexture = new Texture(Gdx.files.internal("skin/onSound.png"));
+        offSoundTexture = new Texture(Gdx.files.internal("skin/offSound.png"));
+        TextureRegionDrawable onTexture = new TextureRegionDrawable(new TextureRegion(onSoundTexture));
+        TextureRegionDrawable offTexture = new TextureRegionDrawable(new TextureRegion(offSoundTexture));
+        ImageButton soundBtn = new ImageButton(onTexture, onTexture, offTexture);
+        soundBtn.setHeight(64);
+        soundBtn.setWidth(64);
+        soundBtn.setPosition(drop.width - soundBtn.getWidth(), drop.height - soundBtn.getHeight());
 
         listener = new ChangeListener() {
             @Override
@@ -73,14 +86,21 @@ public class MenuScreen implements Screen {
                     Gdx.app.exit();
                 }else if(actor == debugCheckBox){
                     drop.debug = debugCheckBox.isChecked();
+                    table.setDebug(drop.debug);
                 }else if(actor == yesButton){
                     drop.pref.putInteger("highScore", 0);
+                    drop.pref.flush();
+                }else if(actor == soundBtn){
+                    if(soundBtn.isChecked()) drop.stopMusic();
+                    else drop.playMusic();
+                    drop.pref.putBoolean("backgroundMusic", !soundBtn.isChecked());
                     drop.pref.flush();
                 }
                 clickSound.play();
             }
         };
 
+        soundBtn.addListener(listener);
         exitButton.addListener(listener);
         resetButton.addListener(listener);
         playButton.addListener(listener);
@@ -88,9 +108,9 @@ public class MenuScreen implements Screen {
         noButton.addListener(listener);
         debugCheckBox.addListener(listener);
 
-        Table table = new Table();
+        table = new Table();
         table.defaults().pad(padding);
-        table.setDebug(true);
+        table.setDebug(drop.debug);
         table.add(menuLabel);
         table.row();
         table.add(dropImage);
@@ -104,6 +124,7 @@ public class MenuScreen implements Screen {
         table.add(debugCheckBox);
         table.setFillParent(true);
         stage.addActor(table);
+        stage.addActor(soundBtn);
     }
 
     @Override
@@ -147,5 +168,7 @@ public class MenuScreen implements Screen {
         stage.dispose();
         skin.dispose();
         dropTexture.dispose();
+        onSoundTexture.dispose();
+        offSoundTexture.dispose();
     }
 }
