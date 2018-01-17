@@ -26,9 +26,6 @@ public class MenuScreen implements Screen {
     private BackgroundRainManager rain;
     private ChangeListener listener;
 
-    private int padding;
-    private int buttonWidth;
-
 
     private Texture dropTexture;
     private Sound clickSound;
@@ -36,15 +33,15 @@ public class MenuScreen implements Screen {
     public MenuScreen(DropGame drop){
         this.drop=drop;
         this.batch=drop.batch;
-        padding = drop.width/75;
-        buttonWidth = drop.width/10;
+
+        int padding = drop.width / 75;
+        int buttonWidth = drop.width / 10;
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click.wav"));
         rain = new BackgroundRainManager(new Texture(Gdx.files.internal("sprites/raindrop.png")), drop);
 
         stage = new Stage(new StretchViewport(drop.width, drop.height), batch);
         Gdx.input.setInputProcessor(stage);
-
 
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
