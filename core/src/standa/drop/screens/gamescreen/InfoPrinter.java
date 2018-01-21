@@ -18,8 +18,8 @@ class InfoPrinter {
     public InfoPrinter(GameScreen game) {
         this.game = game;
         this.font = game.drop.font;
-        gameInfoLayout = new GlyphLayout(font, "", Color.WHITE, game.width / 5, Align.center, true);
-        pausedLayout = new GlyphLayout(font, "GAME IS PAUSED\nTap anywhere to continue.");
+        gameInfoLayout = new GlyphLayout(font, "", Color.WHITE, game.width / 5, Align.left, true);
+        pausedLayout = new GlyphLayout(font, "GAME IS PAUSED\nTap anywhere to continue.", Color.WHITE, 0, Align.center, false);
     }
 
     public void setText(String text) {
@@ -33,6 +33,6 @@ class InfoPrinter {
     public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer) {
         font.draw(batch, gameInfoLayout, offset, game.height - offset);
         if(game.state == GameScreen.GameState.PAUSED) font.draw(batch, pausedLayout,
-                game.width/2 - pausedLayout.width/2, game.height/2 - pausedLayout.height/2);
+                game.width/2, game.height/2 );
     }
 }
