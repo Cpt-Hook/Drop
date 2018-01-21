@@ -19,7 +19,7 @@ class InfoPrinter {
         this.game = game;
         this.font = game.drop.font;
         gameInfoLayout = new GlyphLayout(font, "", Color.WHITE, game.width / 5, Align.center, true);
-        pausedLayout = new GlyphLayout(font, "GAME IS PAUSED\nPress P to continue.");
+        pausedLayout = new GlyphLayout(font, "GAME IS PAUSED\nTap anywhere to continue.");
     }
 
     public void setText(String text) {

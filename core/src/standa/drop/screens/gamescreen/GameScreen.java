@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resume() {
-        drop.setScreen(new InfoScreen(drop, "Game paused", this));
+        state = GameState.PAUSED;
     }
 
     @Override

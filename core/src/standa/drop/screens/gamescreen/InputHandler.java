@@ -18,10 +18,19 @@ class InputHandler extends InputAdapter {
 
     @Override
     public boolean keyUp(int keycode) {
-        if(keycode == Input.Keys.P){
+        if(keycode == Input.Keys.P && game.state == GameScreen.GameState.RUNNING){
             game.switchGameState();
             return true;
         }
         return super.keyUp(keycode);
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if(game.state == GameScreen.GameState.PAUSED){
+            game.switchGameState();
+            return true;
+        }
+        return super.touchUp(screenX, screenY, pointer, button);
     }
 }
