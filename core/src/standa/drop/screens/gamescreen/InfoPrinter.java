@@ -6,34 +6,33 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
-import standa.drop.DropGame;
 
-public class InfoPrinter {
+class InfoPrinter {
 
     private BitmapFont font;
-    private DropGame game;
-    private GlyphLayout layout;
+    private GameScreen game;
+    private GlyphLayout gameInfoLayout, pausedLayout;
 
     private int offset = 5;
 
-    public InfoPrinter(DropGame game) {
+    public InfoPrinter(GameScreen game) {
         this.game = game;
-        this.font=game.font;
-        layout = new GlyphLayout(font, "", Color.WHITE, game.width/5, Align.center, true);
-
+        this.font = game.drop.font;
+        gameInfoLayout = new GlyphLayout(font, "", Color.WHITE, game.width / 5, Align.center, true);
+        pausedLayout = new GlyphLayout(font, "GAME IS PAUSED\nPress P to continue.");
     }
 
     public void setText(String text) {
-        layout.setText(font, text, Color.WHITE, game.width/2, Align.left, true);
+        gameInfoLayout.setText(font, text, Color.WHITE, game.width / 2, Align.left, false);
     }
 
-    public void setText(int score, int health, int highScore){
+    public void setText(int score, int health, int highScore) {
         setText(String.format("Your health: %s%nYour score: %s%nMax score: %s", health, score, highScore));
     }
 
-
-
-    public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer){
-        font.draw(batch, layout, offset, game.height - offset);
+    public void draw(SpriteBatch batch, ShapeRenderer shapeRenderer) {
+        font.draw(batch, gameInfoLayout, offset, game.height - offset);
+        if(game.state == GameScreen.GameState.PAUSED) font.draw(batch, pausedLayout,
+                game.width/2 - pausedLayout.width/2, game.height/2 - pausedLayout.height/2);
     }
 }

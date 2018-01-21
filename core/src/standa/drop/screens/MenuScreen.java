@@ -29,8 +29,6 @@ public class MenuScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     private DropGame drop;
     private BackgroundRainManager rain;
-    private ChangeListener listener;
-
 
     private Texture dropTexture, onSoundTexture, offSoundTexture;
     private Sound clickSound;
@@ -38,12 +36,13 @@ public class MenuScreen implements Screen {
     public MenuScreen(DropGame drop){
         this.drop=drop;
         this.batch=drop.batch;
+        this.shapeRenderer=drop.shapeRenderer;
 
         int padding = drop.width / 75;
         int buttonWidth = drop.width / 10;
 
         clickSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click.wav"));
-        rain = new BackgroundRainManager(new Texture(Gdx.files.internal("sprites/raindrop.png")), drop);
+        rain = new BackgroundRainManager(drop);
 
         stage = new Stage(new StretchViewport(drop.width, drop.height), batch);
         Gdx.input.setInputProcessor(stage);
@@ -74,27 +73,26 @@ public class MenuScreen implements Screen {
         soundBtn.setHeight(64);
         soundBtn.setWidth(64);
         soundBtn.setPosition(drop.width - soundBtn.getWidth(), drop.height - soundBtn.getHeight());
+        soundBtn.setChecked(!drop.pref.getBoolean("backgroundMusic"));
 
-        listener = new ChangeListener() {
+        ChangeListener listener = new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(actor == playButton){
+                if (actor == playButton) {
                     drop.setScreen(new GameScreen(drop));
-                }else if(actor == resetButton){
+                } else if (actor == resetButton) {
                     dialog.show(stage);
-                }else if(actor == exitButton){
+                } else if (actor == exitButton) {
                     Gdx.app.exit();
-                }else if(actor == debugCheckBox){
+                } else if (actor == debugCheckBox) {
                     drop.debug = debugCheckBox.isChecked();
                     table.setDebug(drop.debug);
-                }else if(actor == yesButton){
+                } else if (actor == yesButton) {
                     drop.pref.putInteger("highScore", 0);
-                    drop.pref.flush();
-                }else if(actor == soundBtn){
-                    if(soundBtn.isChecked()) drop.stopMusic();
+                } else if (actor == soundBtn) {
+                    if (soundBtn.isChecked()) drop.stopMusic();
                     else drop.playMusic();
                     drop.pref.putBoolean("backgroundMusic", !soundBtn.isChecked());
-                    drop.pref.flush();
                 }
                 clickSound.play();
             }
@@ -119,16 +117,18 @@ public class MenuScreen implements Screen {
         table.row();
         table.add(resetButton).minWidth(buttonWidth);
         table.row();
-        table.add(exitButton).minWidth(drop.width/10);
+        table.add(exitButton).minWidth(buttonWidth);
         table.row();
         table.add(debugCheckBox);
         table.setFillParent(true);
+
         stage.addActor(table);
         stage.addActor(soundBtn);
     }
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -136,10 +136,10 @@ public class MenuScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0.3f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         rain.tick();
+        stage.act(Gdx.graphics.getDeltaTime());
         batch.begin();
         rain.draw(batch, shapeRenderer);
         batch.end();
-        stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
 
@@ -160,12 +160,13 @@ public class MenuScreen implements Screen {
 
     @Override
     public void hide() {
-
+        drop.pref.flush();
     }
 
     @Override
     public void dispose() {
         stage.dispose();
+        rain.dispose();
         skin.dispose();
         dropTexture.dispose();
         onSoundTexture.dispose();

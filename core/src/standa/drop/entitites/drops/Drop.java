@@ -1,42 +1,33 @@
 package standa.drop.entitites.drops;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 import standa.drop.entitites.GameEntity;
 import standa.drop.screens.gamescreen.GameScreen;
 
-public class Drop extends GameEntity {
-
-    private int speed;
+public abstract class Drop extends GameEntity{
     public boolean toDie = false;
-    private Sound dropSound, gameOverSound;
+    private int speed;
 
-    public Drop(int x, int y, int width, int height, Texture texture, GameScreen game, Sound dropSound, Sound gameOverSound) {
-        super(x, y, width, height, texture, game);
-        this.dropSound = dropSound;
-        this.gameOverSound = gameOverSound;
-        speed = 6;
+    protected Drop(int width, int height, int speed, Texture texture, GameScreen game) {
+        super(MathUtils.random(0, game.width - width), game.height, width, height, texture, game);
+        this.speed=speed;
     }
 
     @Override
     public void tick() {
         rect.y-=speed;
+        super.tick();
         if(hitBox.y<-rect.height){
-            toDie = true;
-            gameOverSound.play();
-            game.removeHealth();
+            goneOffScreen();
         }
         else if(game.bucket.hitBox.overlaps(rect)){
-            toDie = true;
-            dropSound.play();
-            game.addScore();
+            bucketHit();
         }
-        super.tick();
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        dropSound.dispose();
+    protected abstract void bucketHit();
+    protected void goneOffScreen(){
+        toDie = true;
     }
 }

@@ -68,10 +68,10 @@ public class DropGame extends Game {
 
     @Override
     public void dispose () {
+        pref.flush();
         if (screen != null) screen.dispose();
         font.dispose();
         batch.dispose();
-        pref.flush();
         backgroundMusic.dispose();
     }
 }

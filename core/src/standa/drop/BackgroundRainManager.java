@@ -1,5 +1,6 @@
 package standa.drop;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,13 +15,14 @@ public class BackgroundRainManager {
     private DropGame game;
     private Array<RainDrop> raindrops;
     private double speedMultiplier;
+    private int dropsPerTick = 3;
 
-    public BackgroundRainManager(Texture raindropTexture, DropGame game) {
-        this(raindropTexture, game, 1);
+    public BackgroundRainManager(DropGame game) {
+        this(game, 1);
     }
 
-    public BackgroundRainManager(Texture raindropTexture, DropGame game, double speedMultiplier) {
-        this.raindropTexture = raindropTexture;
+    public BackgroundRainManager(DropGame game, double speedMultiplier) {
+        this.raindropTexture = new Texture(Gdx.files.internal("sprites/raindrop.png"));
         this.game=game;
         this.speedMultiplier=speedMultiplier;
         raindrops = new Array<>();
@@ -41,9 +43,9 @@ public class BackgroundRainManager {
     }
 
     public void tick(){
-        createNewRaindrop();
-        createNewRaindrop();
-        createNewRaindrop();
+        for (int i = 0; i < 3; i++) {
+            createNewRaindrop();
+        }
         for(Iterator<RainDrop> iterator = raindrops.iterator(); iterator.hasNext();){
             RainDrop drop = iterator.next();
             drop.tick();

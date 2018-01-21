@@ -13,10 +13,11 @@ import standa.drop.DropGame;
 import standa.drop.entitites.Bucket;
 import standa.drop.screens.InfoScreen;
 
-public class GameScreen implements Screen{
+public class GameScreen implements Screen {
 
     public final DropGame drop;
     public int width, height, tickCount;
+    public GameState state;
 
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -31,10 +32,13 @@ public class GameScreen implements Screen{
 
     //TODO poolable managers (drops, raindrops)
 
-    public GameScreen(DropGame drop){
+    public GameScreen(DropGame drop) {
         this.drop = drop;
+        this.state = GameState.RUNNING;
         width = drop.width;
         height = drop.height;
+
+        Gdx.input.setInputProcessor(new InputHandler(this));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, width, height);
@@ -42,19 +46,21 @@ public class GameScreen implements Screen{
         shapeRenderer = drop.shapeRenderer;
 
         Texture bucketTexture = new Texture(Gdx.files.internal("sprites/bucket.png"));
-        bucket = new Bucket(width / 2, height / 20, bucketTexture.getWidth(), bucketTexture.getHeight(), bucketTexture, this);
+        Sound endOfBOnusSound = Gdx.audio.newSound(Gdx.files.internal("sounds/endofbonus.wav"));
+        bucket = new Bucket(bucketTexture, endOfBOnusSound, this);
 
-        Texture dropTexture = new Texture(Gdx.files.internal("sprites/droplet.png"));
-        Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("sounds/dropSound.wav"));
-        Sound gameOverSound = Gdx.audio.newSound(Gdx.files.internal("sounds/gameover.wav"));
-        dropManager = new DropManager(this, dropTexture, dropSound, gameOverSound);
+        dropManager = new DropManager(this);
 
-        Texture rainDropTexture = new Texture(Gdx.files.internal("sprites/raindrop.png"));
-        rainManager = new BackgroundRainManager(rainDropTexture, drop);
+        rainManager = new BackgroundRainManager(drop);
 
-        printer = new InfoPrinter(drop);
+        printer = new InfoPrinter(this);
 
         highScore = drop.pref.getInteger("highScore");
+    }
+
+    public void switchGameState() {
+        if (state == GameState.RUNNING) state = GameState.PAUSED;
+        else state = GameState.RUNNING;
     }
 
 
@@ -64,8 +70,9 @@ public class GameScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        tick();
-
+        if (state == GameState.RUNNING) {
+            tick();
+        }
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -78,19 +85,18 @@ public class GameScreen implements Screen{
         batch.end();
     }
 
-    public void updateHighScore(int score){
-        if(score > highScore){
+    public void updateHighScore(int score) {
+        if (score > highScore) {
             highScore = score;
             drop.pref.putInteger("highScore", highScore);
-            drop.pref.flush();
         }
     }
 
     private void draw() {
-        rainManager.draw(batch,shapeRenderer);
-        bucket.draw(batch,shapeRenderer);
-        dropManager.draw(batch,shapeRenderer);
-        printer.draw(batch,shapeRenderer);
+        rainManager.draw(batch, shapeRenderer);
+        bucket.draw(batch, shapeRenderer);
+        dropManager.draw(batch, shapeRenderer);
+        printer.draw(batch, shapeRenderer);
     }
 
     private void tick() {
@@ -99,7 +105,7 @@ public class GameScreen implements Screen{
         rainManager.tick();
         updateHighScore(score);
         printer.setText(score, health, highScore);
-        if(health == 0) drop.setScreen(new InfoScreen(drop, "Game over"));
+        if (health == 0) drop.setScreen(new InfoScreen(drop, "Game over"));
         tickCount++;
     }
 
@@ -118,6 +124,7 @@ public class GameScreen implements Screen{
 
     @Override
     public void hide() {
+        drop.pref.flush();
     }
 
     @Override
@@ -127,11 +134,19 @@ public class GameScreen implements Screen{
         rainManager.dispose();
     }
 
-    public void removeHealth(){
+    public void removeHealth() {
         health--;
     }
 
-    public void addScore(){
+    public void addHealth() {
+        health++;
+    }
+
+    public void addScore() {
         score++;
+    }
+
+    enum GameState {
+        PAUSED, RUNNING
     }
 }

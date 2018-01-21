@@ -13,7 +13,6 @@ public class Utils {
         }
     }
 
-
     public static double constrain(double n, double low, double high){
         return Math.max(Math.min(n, high), low);
     }

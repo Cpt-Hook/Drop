@@ -9,8 +9,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Drop";
 		config.fullscreen=false;
-		config.width = 1980;
-		config.height = 1080;
+		config.width = 900;
+		config.height = 450;
 		config.backgroundFPS = -1;
 		config.foregroundFPS = 60;
 		config.useGL30= true;
