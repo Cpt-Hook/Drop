@@ -1,7 +1,6 @@
 package standa.drop.screens;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import standa.drop.BackButtonHandler;
 import standa.drop.BackgroundRainManager;
 import standa.drop.DropGame;
 import standa.drop.screens.gamescreen.GameScreen;
@@ -32,6 +32,7 @@ public class MenuScreen implements Screen {
 
     private Texture dropTexture, onSoundTexture, offSoundTexture;
     private Sound clickSound;
+    private InputMultiplexer multiplexer;
 
     public MenuScreen(DropGame drop){
         this.drop=drop;
@@ -41,11 +42,12 @@ public class MenuScreen implements Screen {
         int padding = drop.width / 75;
         int buttonWidth = drop.width / 10;
 
+        stage = new Stage(new StretchViewport(drop.width, drop.height), batch);
+
+        multiplexer = new InputMultiplexer(new BackButtonHandler(), stage);
+
         clickSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click.wav"));
         rain = new BackgroundRainManager(drop);
-
-        stage = new Stage(new StretchViewport(drop.width, drop.height), batch);
-        Gdx.input.setInputProcessor(stage);
 
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
@@ -128,7 +130,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override

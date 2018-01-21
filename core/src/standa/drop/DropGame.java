@@ -33,6 +33,8 @@ public class DropGame extends Game {
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.25f);
 
+        Gdx.input.setCatchBackKey(true);
+
         if(!pref.contains("backgroundMusic")) playMusic = true;
         playMusic = pref.getBoolean("backgroundMusic");
         if(playMusic) backgroundMusic.play();
